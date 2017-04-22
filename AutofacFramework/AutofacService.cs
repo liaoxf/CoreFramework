@@ -16,15 +16,18 @@ namespace AutofacFramework
             _instance = container;
         }
 
-
+        /// <summary>
+        /// 注入接口(Mvc)
+        /// </summary>
+        /// <param name="assemblyNames"></param>
+        /// <returns></returns>
         public static IContainer Register(params string[] assemblyNames)
         {
             var builder = CreateInstance(_builder);
 
             assemblyNames.ToList().ForEach(name =>
             {
-                var interfaceFactory = Assembly.Load(name);
-                builder.RegisterAssemblyTypes(interfaceFactory, interfaceFactory)
+                builder.RegisterAssemblyTypes(Assembly.Load(name), Assembly.Load(name))
                   .AsImplementedInterfaces();
             });
             _instance = builder.Build();
@@ -53,18 +56,30 @@ namespace AutofacFramework
             return builder;
         }
 
+        /// <summary>
+        /// 反转接口
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
         public static T Resolve<T>()
         {
             return _instance.Resolve<T>();
         }
 
+        /// <summary>
+        /// 构造容器
+        /// </summary>
         public static IContainer Instance
         {
-            //get { return _instance ?? Register(); }
-
             get { return _instance; }
         }
 
+        /// <summary>
+        /// 多线程加锁
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="_instance"></param>
+        /// <returns></returns>
         public static T CreateInstance<T>(T _instance)
         {
             if (_instance == null)
@@ -81,6 +96,9 @@ namespace AutofacFramework
         }
     }
 
+    /// <summary>
+    /// 注入接口
+    /// </summary>
     public interface IRegister
     {
         void Install();
